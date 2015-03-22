@@ -1,6 +1,6 @@
 {
   "name": "chok",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "chokidar shell utility for watching files",
   "main": "index.js",
   "scripts": {
