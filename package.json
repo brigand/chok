@@ -1,0 +1,30 @@
+{
+  "name": "chok",
+  "version": "0.0.2",
+  "description": "chokidar shell utility for watching files",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "chok": "./bin/chok"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brigand/chok.git"
+  },
+  "keywords": [
+    "watch",
+    "fs",
+    "chokidar"
+  ],
+  "author": "Frankie Bagnardi <f.bagnardi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brigand/chok/issues"
+  },
+  "homepage": "https://github.com/brigand/chok",
+  "dependencies": {
+    "chokidar": "^1.0.0-rc4"
+  }
+}

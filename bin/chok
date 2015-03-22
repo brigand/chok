@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+var opts = {
+  positional: [],
+  c: [],
+  a: []
+};
+
+var mode = 'positional';
+
+for (var i=2; i<process.argv.length; i++){
+  var arg = process.argv[i];
+
+  if (arg[0] === '-') {
+    var target = opts[arg.slice(1)];
+    if (target && 'length' in target) {
+        mode = target;
+    }
+    else if (arg.slice(1) in opts) {
+        mode = {set: arg.slice(1)};
+    }
+    else {
+        console.error('Unknown flag ' + arg);
+        process.exit(1);
+    }
+  }
+
+  else if (mode === 'positional') {
+    opts.positional.push(arg);
+  }
+
+  else if (mode.set) {
+    opts[mode.set] = arg;
+    mode = 'positional';
+  }
+
+  else if ('length' in target) {
+    target.push(arg);
+    mode = 'positional';
+  }
+}
+
+console.error(opts);
+
+if (mode !== 'positional') {
+    console.error('Flag missing value', arg);
+    process.exit(1);
+}
+
+if (!opts.positional.length) {
+    console.error('Please provide 1 or more targets to watch.');
+    process.exit(1);
+}
+
+if (!opts.c.length) {
+    console.error('Please provide -c "command", i.e. the action to run when something changes');
+    process.exit(1);
+}
+
+var readyState = 'no';
+
+var cp = require('child_process');
+require('chokidar').watch(opts.positional, {
+    ignored: opts.x && new RegExp(opts.x, 'g'),
+    ignoreInitial: true
+}).on('all', function(event, path){
+    if (event === 'ready' || event === 'raw') return;
+
+    console.error(event, path);
+    cp.spawn(process.env.SHELL, ['-c', opts.c[0]], {stdio: 'inherit'});
+})
+
+console.log('okay');
+
