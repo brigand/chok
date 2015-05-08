@@ -39,8 +39,6 @@ for (var i=2; i<process.argv.length; i++){
   }
 }
 
-console.error(opts);
-
 if (mode !== 'positional') {
     console.error('Flag missing value', arg);
     process.exit(1);
@@ -58,6 +56,12 @@ if (!opts.c.length) {
 
 var readyState = 'no';
 
+function run(){
+    cp.spawn(process.env.SHELL, ['-c', opts.c[0]], {stdio: 'inherit'});
+}
+
+console.error('chok ready: change a file or press enter to run your command');
+
 var cp = require('child_process');
 require('chokidar').watch(opts.positional, {
     ignored: opts.x && new RegExp(opts.x, 'g'),
@@ -66,8 +70,18 @@ require('chokidar').watch(opts.positional, {
     if (event === 'ready' || event === 'raw') return;
 
     console.error(event, path);
-    cp.spawn(process.env.SHELL, ['-c', opts.c[0]], {stdio: 'inherit'});
-})
+    run();
+});
+
+process.stdin.setEncoding('utf8');
+
+process.stdin.on('readable', function(){
+    var chunk = process.stdin.read();
+    if (chunk) {
+        console.error('Running due to stdin event');
+        run();
+    }
+});
 
 console.log('okay');
 
